@@ -5,13 +5,11 @@
  */
 package examination;
 
-import java.awt.Dimension;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JLabel;
-import javax.swing.table.TableModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -23,9 +21,16 @@ public class Examination extends javax.swing.JFrame {
      * Creates new form Examination
      */
     DbConnection db;
-    public Examination() throws ClassNotFoundException, SQLException {
+    final int studentid;
+    final int setid;
+    public Examination(int studentid,int setid) throws ClassNotFoundException, SQLException {
         initComponents();
+        this.setid = setid;
+        this.studentid = studentid;
         this.db = new DbConnection();
+        questionList();
+        showData();
+        fillanswernull();
     }
 
     /**
@@ -45,6 +50,7 @@ public class Examination extends javax.swing.JFrame {
         rdoOption1 = new javax.swing.JRadioButton();
         rdoOption2 = new javax.swing.JRadioButton();
         rdoOption3 = new javax.swing.JRadioButton();
+        lblQuestionNo = new javax.swing.JLabel();
         btnSubmit1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -57,33 +63,48 @@ public class Examination extends javax.swing.JFrame {
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnNext.setBackground(new java.awt.Color(102, 153, 255));
         btnNext.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnNext.setForeground(new java.awt.Color(255, 255, 255));
         btnNext.setText("Next");
-        jPanel1.add(btnNext, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 430, 90, 40));
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
 
         btnPrevious.setBackground(new java.awt.Color(102, 153, 255));
         btnPrevious.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnPrevious.setForeground(new java.awt.Color(255, 255, 255));
         btnPrevious.setText("Previous");
-        jPanel1.add(btnPrevious, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 430, 90, 40));
+        btnPrevious.setEnabled(false);
+        btnPrevious.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPreviousActionPerformed(evt);
+            }
+        });
 
         lblQuestion.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblQuestion.setText("Question");
-        jPanel1.add(lblQuestion, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 70, 90, 40));
 
         rdoOption4.setBackground(new java.awt.Color(204, 204, 204));
         rdoOption4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         rdoOption4.setText("Option 4");
-        jPanel1.add(rdoOption4, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 290, 210, 40));
+        rdoOption4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdoOption4ActionPerformed(evt);
+            }
+        });
 
         rdoOption1.setBackground(new java.awt.Color(204, 204, 204));
         rdoOption1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         rdoOption1.setText("Option 1");
-        jPanel1.add(rdoOption1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 140, 210, 40));
+        rdoOption1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdoOption1ActionPerformed(evt);
+            }
+        });
 
         rdoOption2.setBackground(new java.awt.Color(204, 204, 204));
         rdoOption2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -93,12 +114,66 @@ public class Examination extends javax.swing.JFrame {
                 rdoOption2ActionPerformed(evt);
             }
         });
-        jPanel1.add(rdoOption2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 190, 160, 40));
 
         rdoOption3.setBackground(new java.awt.Color(204, 204, 204));
         rdoOption3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         rdoOption3.setText("Option 3");
-        jPanel1.add(rdoOption3, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 240, 210, 40));
+        rdoOption3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdoOption3ActionPerformed(evt);
+            }
+        });
+
+        lblQuestionNo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lblQuestionNo.setText("1");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(100, 100, 100)
+                .addComponent(lblQuestionNo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(lblQuestion))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(130, 130, 130)
+                .addComponent(rdoOption1))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(130, 130, 130)
+                .addComponent(rdoOption2))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(130, 130, 130)
+                .addComponent(rdoOption3))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(130, 130, 130)
+                .addComponent(rdoOption4))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(690, 690, 690)
+                .addComponent(btnPrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(btnNext, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(70, 70, 70)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblQuestionNo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblQuestion, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30)
+                .addComponent(rdoOption1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(rdoOption2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(rdoOption3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(rdoOption4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(100, 100, 100)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnPrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNext, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, 900, 480));
 
@@ -106,40 +181,203 @@ public class Examination extends javax.swing.JFrame {
         btnSubmit1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnSubmit1.setForeground(new java.awt.Color(255, 255, 255));
         btnSubmit1.setText("Submit");
+        btnSubmit1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubmit1ActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnSubmit1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 600, 110, 40));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void rdoOption2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdoOption2ActionPerformed
-        // TODO add your handling code here:
+        String ans = rdoOption2.getText();
+        rdoOption1.setSelected(false);
+        rdoOption3.setSelected(false);
+        rdoOption4.setSelected(false);
+        answerList(ans);
     }//GEN-LAST:event_rdoOption2ActionPerformed
 
+    
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+
+    }//GEN-LAST:event_formWindowOpened
+
+    int counter=0;
+    private void btnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreviousActionPerformed
+
+        counter--;
+        selectRdo();
+        btnNext.setEnabled(true);
+        if(counter != 0)
+        {
+            btnPrevious.setEnabled(true);
+        }
+        else{
+            btnPrevious.setEnabled(false);
+        }
+        showData();
+    }//GEN-LAST:event_btnPreviousActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+
+        counter++;
+        selectRdo();
+        btnPrevious.setEnabled(true);
+        if(counter < (qList.size()-1))
+        {
+            btnNext.setEnabled(true);
+        }
+        else{
+            btnNext.setEnabled(false);
+        }
+        showData();
+    }//GEN-LAST:event_btnNextActionPerformed
+
+    private void rdoOption1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdoOption1ActionPerformed
+        // TODO add your handling code here:
+        String ans = rdoOption1.getText();
+        rdoOption2.setSelected(false);
+        rdoOption3.setSelected(false);
+        rdoOption4.setSelected(false);
+        answerList(ans);
+    }//GEN-LAST:event_rdoOption1ActionPerformed
+
+    private void rdoOption3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdoOption3ActionPerformed
+        String ans = rdoOption3.getText();
+        rdoOption1.setSelected(false);
+        rdoOption2.setSelected(false);
+        rdoOption4.setSelected(false);
+        answerList(ans);
+    }//GEN-LAST:event_rdoOption3ActionPerformed
+
+    private void rdoOption4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdoOption4ActionPerformed
+        String ans = rdoOption4.getText();
+        rdoOption1.setSelected(false);
+        rdoOption2.setSelected(false);
+        rdoOption3.setSelected(false);
+        answerList(ans);
+    }//GEN-LAST:event_rdoOption4ActionPerformed
+
+    int marks;
+    private void btnSubmit1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmit1ActionPerformed
+        // TODO add your handling code here:
+        calculateMark();
+        JOptionPane.showMessageDialog(null, "You have scored "+marks);
+        insertdetails();
+        try { 
+            StudentDashBoard studentDashBoard = new StudentDashBoard(studentid);
+            this.dispose();
+            studentDashBoard.setVisible(true);
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Examination.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnSubmit1ActionPerformed
+    
+    int correct_ans =0;
+    public void calculateMark()
+    {
+        int listsize = qList.size();
+        for(int i=0; i < qList.size();i++)
+        {
+            String answer1 = qList.get(i).getAnswer().replace(" ", "");
+            String answer2 = answer.get(i).toString().replace(" ", "");
+            if(answer1.equals(answer2)) 
+            {
+                correct_ans++;
+            }
+        }
+        marks = (correct_ans*100)/listsize;
+    }
+    
+    ArrayList<Questions>qList = new ArrayList<>();
+    private void showData(){
+        lblQuestion.setText(qList.get(counter).getQuestion());
+        rdoOption1.setText(qList.get(counter).getOption1());
+        rdoOption2.setText(qList.get(counter).getOption2());
+        rdoOption3.setText(qList.get(counter).getOption3());
+        rdoOption4.setText(qList.get(counter).getOption4());
+    }
+    private void questionList() throws SQLException{
+        String query = "select top 10 * from Questions where Set_ID = "+setid+"";
+        ResultSet rs = db.stm.executeQuery(query);
+        Questions questions;
+        while(rs.next())
+        {
+            questions = new Questions(rs.getString("Questions"),rs.getString("Answers"),rs.getString("Option1"),
+                    rs.getString("Option2"),rs.getString("Option3"),rs.getString("Option4"),rs.getInt("Set_ID"));
+            qList.add(questions);
+        }
+    }
+    
+    ArrayList answer = new ArrayList();
+    private void fillanswernull()
+    {
+        for(int i=0;i<qList.size();i++)
+        {
+            answer.add(null);
+        }
+    }
+    
+    public void answerList(String value){
+        answer.set(counter, value);
+    }
+    
+    public void selectRdo()
+    {
+        if((qList.get(counter).getOption1())==answer.get(counter))
+        {
+            rdoOption1.setSelected(true);
+            rdoOption2.setSelected(false);
+            rdoOption3.setSelected(false);
+            rdoOption4.setSelected(false);
+        }
+        else if((qList.get(counter).getOption2())==answer.get(counter))
+        {
+            rdoOption2.setSelected(true);
+            rdoOption1.setSelected(false);
+            rdoOption3.setSelected(false);
+            rdoOption4.setSelected(false);
+        }
+        else if((qList.get(counter).getOption3())==answer.get(counter))
+        {
+            rdoOption1.setSelected(false);
+            rdoOption2.setSelected(false);
+            rdoOption3.setSelected(true);
+            rdoOption4.setSelected(false);
+        }
+        else if((qList.get(counter).getOption4())==answer.get(counter))
+        {
+            rdoOption1.setSelected(false);
+            rdoOption2.setSelected(false);
+            rdoOption3.setSelected(false);
+            rdoOption4.setSelected(true);
+        }
+        else
+        {
+            rdoOption1.setSelected(false);
+            rdoOption2.setSelected(false);
+            rdoOption3.setSelected(false);
+            rdoOption4.setSelected(false);
+        }
+        
+        
+    }
+    
+    public void insertdetails()
+    {
         try {
-            // TODO add your handling code here:
-            data();
-            Object row[] = (Object[])questions.get(0);
-            lblQuestion.setText(row[0].toString());
-            
-        } catch (SQLException ex) {
+            String query = "insert into Exam_Details(Student_Id,Set_Id,Mark_Obtained) "
+                    + "values("+studentid+","+setid+","+marks+")";
+            db.manipulate(query);
+        } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Examination.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-    }//GEN-LAST:event_formWindowOpened
+    }
     
-    ArrayList questions;
-    @SuppressWarnings("empty-statement")
-    private void data() throws SQLException
-    {
-        String query = "select * from Questions";
-        ResultSet rs = db.stm.executeQuery(query);
-        while(rs.next())
-        {
-            Object row[] = {rs.getString("Questions")};
-            questions.add(row);
-        }
-    } 
+    
     /**
      * @param args the command line arguments
      */
@@ -167,14 +405,14 @@ public class Examination extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+        int setid=0;
+        int studentid=0;
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new Examination().setVisible(true);
-                } catch (ClassNotFoundException | SQLException ex) {
-                    Logger.getLogger(Examination.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                new Examination(studentid,setid).setVisible(true);
+            } catch (ClassNotFoundException | SQLException ex) {
+                Logger.getLogger(Examination.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
@@ -185,6 +423,7 @@ public class Examination extends javax.swing.JFrame {
     private javax.swing.JButton btnSubmit1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblQuestion;
+    private javax.swing.JLabel lblQuestionNo;
     private javax.swing.JRadioButton rdoOption1;
     private javax.swing.JRadioButton rdoOption2;
     private javax.swing.JRadioButton rdoOption3;

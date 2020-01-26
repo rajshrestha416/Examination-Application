@@ -37,7 +37,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
         btnClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnAddStudent.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnAddStudent.setText("Add Student");
@@ -46,7 +45,6 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 btnAddStudentActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAddStudent, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 130, 140, 90));
 
         btnAddQuestion.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnAddQuestion.setText("Add Question");
@@ -55,13 +53,10 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 btnAddQuestionActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAddQuestion, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 130, 150, 90));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("Welcome to the Admin DashBoard");
         jLabel1.setName(""); // NOI18N
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 50, 280, 41));
-        jLabel1.getAccessibleContext().setAccessibleDescription("");
 
         btnClose.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnClose.setText("Close");
@@ -70,19 +65,51 @@ public class AdminDashBoard extends javax.swing.JFrame {
                 btnCloseActionPerformed(evt);
             }
         });
-        getContentPane().add(btnClose, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 240, 150, 90));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(120, 120, 120)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(btnAddQuestion, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(80, 80, 80)
+                        .addComponent(btnAddStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(190, 190, 190)
+                        .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(88, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAddQuestion, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAddStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20)
+                .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(81, Short.MAX_VALUE))
+        );
+
+        jLabel1.getAccessibleContext().setAccessibleDescription("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
-    AdminDashBoard adminDashBoard= new AdminDashBoard();
     private void btnAddQuestionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddQuestionActionPerformed
         try {
             // TODO add your handling code here:
             AddQuestion addQuestion = new AddQuestion();
+            new AdminDashBoard().setVisible(false);
             addQuestion.setVisible(true);
-            adminDashBoard.setVisible(false);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(AdminDashBoard.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -92,8 +119,8 @@ public class AdminDashBoard extends javax.swing.JFrame {
         // TODO add your handling code here:
         try {
             Student student = new Student();
+            new AdminDashBoard().setVisible(false);
             student.setVisible(true);
-            adminDashBoard.setVisible(false);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(AdminDashBoard.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -5,6 +5,13 @@
  */
 package examination;
 
+import java.sql.SQLException;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author User
@@ -14,8 +21,18 @@ public class StudentDashBoard extends javax.swing.JFrame {
     /**
      * Creates new form StudentDashBoard
      */
-    public StudentDashBoard() {
+    
+    DbConnection db;
+    private String query;
+    int studentid;
+    public StudentDashBoard(int studentid) throws ClassNotFoundException, SQLException {
         initComponents();
+        this.studentid=studentid;
+        db = new DbConnection();
+        addcomboBox();
+        StudentDetails();
+        studentExamDetail();
+        
     }
 
     /**
@@ -29,38 +46,33 @@ public class StudentDashBoard extends javax.swing.JFrame {
 
         lblGreeting = new javax.swing.JLabel();
         lblBatch = new javax.swing.JLabel();
-        lblStudentName1 = new javax.swing.JLabel();
+        lblDetails = new javax.swing.JLabel();
         label = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblExamDetail = new javax.swing.JTable();
         btnClose = new javax.swing.JButton();
         btnGiveExam = new javax.swing.JButton();
+        lblStudentName2 = new javax.swing.JLabel();
+        cboSubject = new javax.swing.JComboBox<>();
+        lblStudentName = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblGreeting.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lblGreeting.setText("Welcome ,");
-        getContentPane().add(lblGreeting, new org.netbeans.lib.awtextra.AbsoluteConstraints(56, 60, -1, 32));
 
         lblBatch.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lblBatch.setText("Batch");
-        getContentPane().add(lblBatch, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 134, -1, 35));
 
-        lblStudentName1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        lblStudentName1.setText("Student Name");
-        getContentPane().add(lblStudentName1, new org.netbeans.lib.awtextra.AbsoluteConstraints(56, 93, -1, 35));
+        lblDetails.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblDetails.setText("Details of Exam Given");
 
         label.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         label.setText("Batch :");
-        getContentPane().add(label, new org.netbeans.lib.awtextra.AbsoluteConstraints(56, 134, -1, 35));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblExamDetail.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Subjects", "Set", "Mark Obtained"
@@ -74,9 +86,7 @@ public class StudentDashBoard extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, 410, 90));
+        jScrollPane1.setViewportView(tblExamDetail);
 
         btnClose.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnClose.setText("Close");
@@ -85,7 +95,6 @@ public class StudentDashBoard extends javax.swing.JFrame {
                 btnCloseActionPerformed(evt);
             }
         });
-        getContentPane().add(btnClose, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 310, 96, 35));
 
         btnGiveExam.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnGiveExam.setText("Give Exam");
@@ -94,20 +103,174 @@ public class StudentDashBoard extends javax.swing.JFrame {
                 btnGiveExamActionPerformed(evt);
             }
         });
-        getContentPane().add(btnGiveExam, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 310, 96, 35));
+
+        lblStudentName2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblStudentName2.setText("Choose Subject To Give an Exam");
+
+        cboSubject.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboSubject.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboSubject.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboSubjectActionPerformed(evt);
+            }
+        });
+
+        lblStudentName.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblStudentName.setText("Student Name");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(label)
+                                .addGap(17, 17, 17)
+                                .addComponent(lblBatch))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblStudentName, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(60, 60, 60)
+                        .addComponent(lblGreeting))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(81, 81, 81)
+                        .addComponent(lblStudentName2)
+                        .addGap(38, 38, 38)
+                        .addComponent(cboSubject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(47, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnGiveExam, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
+                .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(145, 145, 145))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(lblGreeting, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lblStudentName, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblBatch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(lblDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblStudentName2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboSubject, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(45, 45, 45)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnGiveExam, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(36, Short.MAX_VALUE))
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    private void addcomboBox()
+    {
+        try {
+            cboSubject.removeAllItems();
+            query = "select Subject from Categories";
+            ResultSet rs = db.stm.executeQuery(query);
+            
+            while(rs.next()){
+                cboSubject.addItem(rs.getString("Subject"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StudentDashBoard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void studentExamDetail() throws SQLException
+    {
+        DefaultTableModel model = (DefaultTableModel)tblExamDetail.getModel();
+//        for(int i=0;i < model.getRowCount(); i = i + 1/2)
+//        {
+//            model.removeRow(i);
+//        }
+        query = "Select e.Exam_Id,e.Mark_Obtained,c.Subject,s.Set_code,s.Set_Id "
+                + "from Exam_Details as e,Categories as c,Sets as s,Students as st "
+                + "where e.Student_Id ="+studentid+" and e.Student_Id=st.Student_Id and "
+                + "e.Set_Id = s.Set_Id and s.Category_Id = c.Category_Id";   
+        ResultSet rs = db.stm.executeQuery(query);
+        
+        while(rs.next()){
+            setid = rs.getInt("Set_Id");
+            Object row[] = {rs.getString("Subject"),rs.getString("Set_code"),rs.getInt("Mark_Obtained")};
+            model.addRow(row);
+        }
+    }
+    private void StudentDetails()
+    {
+        try {
+            query = "Select * from Students where Student_Id = "+studentid+"";
+            ResultSet rs = db.stm.executeQuery(query);
+            
+            while(rs.next()){
+                lblDetails.setText(rs.getString("Student_Name"));
+                lblBatch.setText(rs.getString("Batch"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StudentDashBoard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    int setid;
+    public void set()
+    {
+        try {
+            query = "Select s.* from Sets as s,Categories as c "
+                    + "where c.Subject = '"+cboSubject.getSelectedItem()+"' and c.Category_Id = s.Category_Id";
+            ResultSet rs = db.stm.executeQuery(query);
+            
+            while(rs.next()){
+                if(setid != rs.getInt("Set_Id"))
+                {
+                    setid = rs.getInt("Set_Id");
+                    break;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StudentDashBoard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    
+    
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
         // TODO add your handling code here:
         
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void btnGiveExamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGiveExamActionPerformed
-        // TODO add your handling code here:
+        try {
+            set();
+            // TODO add your handling code here:
+            Examination examination = new Examination(studentid,setid);
+            examination.setVisible(true);
+            new StudentDashBoard(studentid).dispose();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(StudentDashBoard.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_btnGiveExamActionPerformed
+
+    private void cboSubjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboSubjectActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cboSubjectActionPerformed
 
     /**
      * @param args the command line arguments
@@ -136,10 +299,13 @@ public class StudentDashBoard extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+        int studentid=0;
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new StudentDashBoard().setVisible(true);
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                new StudentDashBoard(studentid).setVisible(true);
+            } catch (ClassNotFoundException | SQLException ex) {
+                Logger.getLogger(StudentDashBoard.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
@@ -147,11 +313,14 @@ public class StudentDashBoard extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnGiveExam;
+    private javax.swing.JComboBox<String> cboSubject;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel label;
     private javax.swing.JLabel lblBatch;
+    private javax.swing.JLabel lblDetails;
     private javax.swing.JLabel lblGreeting;
-    private javax.swing.JLabel lblStudentName1;
+    private javax.swing.JLabel lblStudentName;
+    private javax.swing.JLabel lblStudentName2;
+    private javax.swing.JTable tblExamDetail;
     // End of variables declaration//GEN-END:variables
 }
