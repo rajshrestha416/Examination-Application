@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -52,7 +51,6 @@ public class StudentDashBoard extends javax.swing.JFrame {
         tblExamDetail = new javax.swing.JTable();
         btnClose = new javax.swing.JButton();
         btnGiveExam = new javax.swing.JButton();
-        lblStudentName2 = new javax.swing.JLabel();
         cboSubject = new javax.swing.JComboBox<>();
         lblStudentName = new javax.swing.JLabel();
 
@@ -104,9 +102,6 @@ public class StudentDashBoard extends javax.swing.JFrame {
             }
         });
 
-        lblStudentName2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        lblStudentName2.setText("Choose Subject To Give an Exam");
-
         cboSubject.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         cboSubject.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboSubject.addActionListener(new java.awt.event.ActionListener() {
@@ -138,9 +133,7 @@ public class StudentDashBoard extends javax.swing.JFrame {
                         .addGap(60, 60, 60)
                         .addComponent(lblGreeting))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(81, 81, 81)
-                        .addComponent(lblStudentName2)
-                        .addGap(38, 38, 38)
+                        .addGap(321, 321, 321)
                         .addComponent(cboSubject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(47, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -166,10 +159,8 @@ public class StudentDashBoard extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblStudentName2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cboSubject, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(45, 45, 45)
+                .addComponent(cboSubject, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnGiveExam, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -221,7 +212,7 @@ public class StudentDashBoard extends javax.swing.JFrame {
             ResultSet rs = db.stm.executeQuery(query);
             
             while(rs.next()){
-                lblDetails.setText(rs.getString("Student_Name"));
+                lblStudentName.setText(rs.getString("Student_Name"));
                 lblBatch.setText(rs.getString("Batch"));
             }
         } catch (SQLException ex) {
@@ -320,7 +311,6 @@ public class StudentDashBoard extends javax.swing.JFrame {
     private javax.swing.JLabel lblDetails;
     private javax.swing.JLabel lblGreeting;
     private javax.swing.JLabel lblStudentName;
-    private javax.swing.JLabel lblStudentName2;
     private javax.swing.JTable tblExamDetail;
     // End of variables declaration//GEN-END:variables
 }

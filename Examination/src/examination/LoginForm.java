@@ -234,6 +234,7 @@ public class LoginForm extends javax.swing.JFrame {
             while(rs.next())
             {
                 counter++;
+                return true;
             }
         }
         catch (SQLException ex) {

@@ -21,8 +21,11 @@ public class Examination extends javax.swing.JFrame {
      * Creates new form Examination
      */
     DbConnection db;
-    final int studentid;
-    final int setid;
+    public final int studentid;
+    public final int setid;
+    public int Question_no;
+    public String Question;
+    
     public Examination(int studentid,int setid) throws ClassNotFoundException, SQLException {
         initComponents();
         this.setid = setid;
@@ -374,9 +377,19 @@ public class Examination extends javax.swing.JFrame {
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Examination.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
     
+    
+//    public void update()
+//    {
+//        try {
+//            String query = "Update Exam_Details set Student_Id = "+studentid+",Set_Id = "+setid+""
+//                    + " Mark_Obtained = "+marks+" where Exam_id = ";
+//            db.manipulate(query);
+//        } catch (ClassNotFoundException | SQLException ex) {
+//            Logger.getLogger(Examination.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
     
     /**
      * @param args the command line arguments

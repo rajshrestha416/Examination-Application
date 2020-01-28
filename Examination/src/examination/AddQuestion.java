@@ -20,15 +20,23 @@ import javax.swing.table.TableModel;
 public class AddQuestion extends javax.swing.JFrame {
 
     DbConnection db;
-    public int QuestionId;
-    public String SubjectName;
+    public int questionId;
+    public String subjectName;
     public String query;
+    public String set;
+    public String question;
+    public String answer;
+    public String optionA;
+    public String optionB;
+    public String optionC;
+    public String optionD;
+    
+    
     public AddQuestion() throws ClassNotFoundException, SQLException {
         this.db = new DbConnection();
         initComponents();
         addcombo();
         tableData();
-        
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -280,9 +288,22 @@ public class AddQuestion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setValue()
+    {
+        subjectName = txtSubjectName.getText();
+        set = cboSet.getSelectedItem().toString();
+        question = txtQuestion.getText();
+        answer = txtAnswer.getText();
+        optionA = txtOptionA.getText();
+        optionB = txtOptionA.getText();
+        optionC = txtOptionA.getText();
+        optionD = txtOptionA.getText();
+        
+        
+    }
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         
-        SubjectName = txtSubjectName.getText();
+        setValue();
         try {
             insertCategory();
             insertSets(); 
@@ -293,29 +314,24 @@ public class AddQuestion extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        if(SubjectName.equals(txtSubjectName.getText()) && cboSet.getSelectedItem().equals('A'))
-        {
-            JOptionPane.showMessageDialog(null, "You cannot change the Set and Subject name.");
-            txtSubjectName.setText(SubjectName);
-            //cboSet.(set);
-        }
-        else{
-                update();
-        }
-          
+        setValue();
+        update();   
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        try {
-            // TODO add your handling code here:
-            query = "Delete Questions where Question_Id = '"+QuestionId+"'";
-            db.manipulate(query);
-            JOptionPane.showMessageDialog(null, "Question Deleted !!");
-            tableData();
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(AddQuestion.class.getName()).log(Level.SEVERE, null, ex);
-        }
+         // TODO add your handling code here:
+        int response = JOptionPane.showConfirmDialog(this, "Are you sure You want to Delete this Student Detail","Confirm",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if(response == JOptionPane.YES_OPTION)
+            {    
+                try {
+                    delete();
+                    JOptionPane.showMessageDialog(null,"Data Deleted.");
+                    tableData();
+                } catch (SQLException ex) {
+                    Logger.getLogger(AddQuestion.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     Boolean check; 
@@ -323,7 +339,7 @@ public class AddQuestion extends javax.swing.JFrame {
         if(!checkCategory())
         {
             try {
-                query = "insert into Categories values('"+SubjectName+"')";
+                query = "insert into Categories values('"+subjectName+"')";
                 db.manipulate(query);
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(AddQuestion.class.getName()).log(Level.SEVERE, null, ex);
@@ -332,19 +348,10 @@ public class AddQuestion extends javax.swing.JFrame {
     }
     public void update(){
         try {
-//            String question;
-//            String Answers;
-//            String OptionA;
-//            String OptionB;
-//            String OptionC;
-//            String OptionD;
-//            int QuestionId;
-//            String selectedSubject;
-//            int subjectid;
             // TODO add your handling code here
                 query = "Update Questions Set Questions = '"+txtQuestion.getText()+"', Answers = '"+txtAnswer.getText()+"'"
                     + ",Option1 = '"+txtOptionA.getText()+"',Option2 = '"+txtOptionB.getText()+"',Option3 = '"+txtOptionC.getText()+"',"
-                    + "Option4 = '"+txtOptionD.getText()+"' where Question_Id = "+QuestionId+"";
+                    + "Option4 = '"+txtOptionD.getText()+"' where Question_Id = "+questionId+"";
                 db.manipulate(query);
                 JOptionPane.showMessageDialog(null, "Question updated !!");
                 tableData();
@@ -352,12 +359,24 @@ public class AddQuestion extends javax.swing.JFrame {
                 Logger.getLogger(AddQuestion.class.getName()).log(Level.SEVERE, null, ex);
             }
     }
+    public void delete()
+    {
+        try {
+            query = "Delete Questions where Question_Id = '"+questionId+"'";
+            db.manipulate(query);
+            JOptionPane.showMessageDialog(null, "Question Deleted !!");
+            tableData();
+       } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Student.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void insertSets() throws SQLException
     {
         if(!checkSet())
         {
             try {
-                query = "insert into Sets values('"+cboSet.getSelectedItem()+"',("+subjectid+"))";
+                query = "insert into Sets values('"+set+"',("+subjectid+"))";
                 db.manipulate(query);
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(AddQuestion.class.getName()).log(Level.SEVERE, null, ex);
@@ -369,8 +388,8 @@ public class AddQuestion extends javax.swing.JFrame {
         {
             try {
                 query = "insert into Questions(Questions,Answers,Option1,Option2,Option3,Option4,Set_ID)"
-                        + "values('"+txtQuestion.getText()+"','"+txtAnswer.getText()+"','"+txtOptionA.getText()+"'"
-                        + ",'"+txtOptionB.getText()+"','"+txtOptionC.getText()+"','"+txtOptionD.getText()+"',("+setid+"))";
+                        + "values('"+question+"','"+answer+"','"+optionA+"'"
+                        + ",'"+optionB+"','"+optionC+"','"+optionD+"',("+setid+"))";
                 db.manipulate(query);
             JOptionPane.showMessageDialog(null,"Question Registered.");
             tableData();
@@ -413,9 +432,9 @@ public class AddQuestion extends javax.swing.JFrame {
         // TODO add your handling code here:
         int selectedrow = tblQuestion.getSelectedRow();
         TableModel model = tblQuestion.getModel();
-        QuestionId = Integer.parseInt(model.getValueAt(selectedrow,0).toString());
-        SubjectName = model.getValueAt(selectedrow,2).toString();
-        txtSubjectName.setText(SubjectName);
+        questionId = Integer.parseInt(model.getValueAt(selectedrow,0).toString());
+        subjectName = model.getValueAt(selectedrow,2).toString();
+        txtSubjectName.setText(subjectName);
         cboSet.setSelectedItem(model.getValueAt(selectedrow,3).toString());
         txtQuestion.setText(model.getValueAt(selectedrow,4).toString());
         txtAnswer.setText(model.getValueAt(selectedrow,5).toString());
@@ -427,7 +446,7 @@ public class AddQuestion extends javax.swing.JFrame {
 
     String subjectid;
     public Boolean checkCategory() throws SQLException{
-        query = "Select Category_Id from Categories where Subject = '"+txtSubjectName.getText()+"'";
+        query = "Select Category_Id from Categories where Subject = '"+subjectName+"'";
         ResultSet rs = db.stm.executeQuery(query);
         int counter = 0;
         while(rs.next()){
@@ -440,7 +459,7 @@ public class AddQuestion extends javax.swing.JFrame {
     public Boolean checkSet() throws SQLException
     {
         int counter = 0;
-            query = "Select Set_Id from Sets where Set_code = '"+cboSet.getSelectedItem()+"' and Category_Id = ("+subjectid+")";
+            query = "Select Set_Id from Sets where Set_code = '"+set+"' and Category_Id = ("+subjectid+")";
             ResultSet rs = db.stm.executeQuery(query);
             while(rs.next()){
                 //setid = rs.getInt("Set_Id");
@@ -449,6 +468,8 @@ public class AddQuestion extends javax.swing.JFrame {
             setid = query;
         return counter > 0 ;
     }
+    
+    
     private void tableData() throws SQLException{
         clear();
         DefaultTableModel model = (DefaultTableModel)tblQuestion.getModel();   

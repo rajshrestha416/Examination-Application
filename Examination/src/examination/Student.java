@@ -22,6 +22,12 @@ public class Student extends javax.swing.JFrame {
     /**
      * Creates new form Student
      */
+    public int StudentId;
+    public String studentname;
+    public String batch;
+    public String username;
+    public String password;
+    public String comfirmPassword;
     public Student() throws ClassNotFoundException, SQLException {
         this.db = new DbConnection();
         initComponents();
@@ -237,24 +243,36 @@ public class Student extends javax.swing.JFrame {
     
     DbConnection db;
     
+    public void setValue()
+    {
+        
+        studentname = txtStudentName.getText();
+        batch = txtBatch.getText();
+        username = txtUserName.getText();
+        password = txtPassword.getText();
+        comfirmPassword = txtConfirmPassword.getText();
+    }
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        setValue();
         int row = tblStudentData.getSelectedRow();
         if(row < 0)
         {
             JOptionPane.showMessageDialog(null,"Please Select row to edit that row.");
         }
         else{
-            String query = "Update Students SET Student_Name = '"+txtStudentName.getText()+"', Batch = '"+txtBatch.getText()+"',"
-                + "Username = '"+txtUserName.getText()+"', Password = '"+txtPassword.getText()+"' where Student_Id = "+StudentId+"";
-            if(txtPassword.getText().equals(txtConfirmPassword.getText()))
+            
+            if(password.equals(comfirmPassword))
             {
-                try {
-                db.manipulate(query);
-                JOptionPane.showMessageDialog(null,"Data Updated.");
-                retrieve();
-                } catch (ClassNotFoundException | SQLException ex) {
-                    Logger.getLogger(Student.class.getName()).log(Level.SEVERE, null, ex);
+                Boolean update = update();
+                if(update ==true)
+                {
+                    JOptionPane.showMessageDialog(null,"Data updated.");
+                    retrieve();
                 }
+                else{
+                    JOptionPane.showMessageDialog(null,"Error occured while registering.");
+                }
+                
             }
             else{
                 JOptionPane.showMessageDialog(null, "Password Doesn't Matched.");
@@ -274,42 +292,43 @@ public class Student extends javax.swing.JFrame {
             int response = JOptionPane.showConfirmDialog(this, "Are you sure You want to Delete this Student Detail","Confirm",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if(response == JOptionPane.YES_OPTION)
             {
-                String query = "Delete Students where Student_Id = "+StudentId+"";
-                try {
-                    db.manipulate(query);
-                    JOptionPane.showMessageDialog(null,"Deleted Successfully");
+                Boolean delete = delete();
+                if(delete ==true)
+                {
+                    JOptionPane.showMessageDialog(null,"Data Deleted.");
                     retrieve();
-             
-                } catch (ClassNotFoundException | SQLException ex) {
-                    Logger.getLogger(Student.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                else{
+                    JOptionPane.showMessageDialog(null,"Unable to Delete.");
                 }
             }
         }
         
     }//GEN-LAST:event_btnDeleteActionPerformed
 
+    
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         // TODO add your handling code here:
-            String query = "insert into Students values ('"+txtStudentName.getText()+"', '"+txtBatch.getText()+"',"
-                + " '"+txtUserName.getText()+"', '"+txtPassword.getText()+"' )";
+            setValue();
             if(txtPassword.getText().equals(txtConfirmPassword.getText()))
             {
-                try {
-                db.manipulate(query);
-                JOptionPane.showMessageDialog(null,"Student Registered.");
-                retrieve();
-                } catch (ClassNotFoundException | SQLException ex) {
-                    Logger.getLogger(Student.class.getName()).log(Level.SEVERE, null, ex);
+                Boolean insert = insert();
+                if(insert ==true)
+                {
+                    JOptionPane.showMessageDialog(null,"Student Registered.");
+                    retrieve();
+                }
+                else{
+                    JOptionPane.showMessageDialog(null,"Error occured while registering.");
                 }
             }
             else{
                 JOptionPane.showMessageDialog(null, "Password Doesn't Matched.");
             }
-            
-        
     }//GEN-LAST:event_btnSaveActionPerformed
 
-    int StudentId;
+    
+    
     private void tblStudentDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblStudentDataMouseClicked
         // TODO add your handling code here:
         int row = tblStudentData.getSelectedRow();
@@ -322,17 +341,62 @@ public class Student extends javax.swing.JFrame {
         txtConfirmPassword.setText(model.getValueAt(row,5).toString());
     }//GEN-LAST:event_tblStudentDataMouseClicked
 
-    public void retrieve() throws ClassNotFoundException, SQLException
+    public Boolean insert()
     {
-        clear();
-        DefaultTableModel model = (DefaultTableModel)tblStudentData.getModel();   
-        String query = "Select * from Students"; 
-	ResultSet rs = db.stm.executeQuery(query);
-        int counter =1;
-	while (rs.next()) { 
-            Object row[] = {rs.getString("Student_Id"),counter, rs.getString("Student_Name"), rs.getString("Batch"), rs.getString("Username"), rs.getString("Password")};
-            model.addRow(row);
-            counter++;
+        String query = "insert into Students values ('"+studentname+"', '"+batch+"',"
+                + " '"+username+"', '"+password+"' )";
+        try {
+            db.manipulate(query);
+        } 
+        catch (ClassNotFoundException | SQLException ex)
+        {
+            Logger.getLogger(Student.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }
+    
+    public Boolean update()
+    {
+        String query = "Update Students SET Student_Name = '"+studentname+"', Batch = '"+batch+"',"
+                + "Username = '"+username+"', Password = '"+password+"' where Student_Id = "+StudentId+"";
+        try {
+            db.manipulate(query);
+            } catch (ClassNotFoundException | SQLException ex) {
+                Logger.getLogger(Student.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+        return true;
+    }
+    
+    public Boolean delete()
+    {
+         String query = "Delete Students where Student_Id = "+StudentId+"";
+            try {
+                db.manipulate(query);
+            } catch (ClassNotFoundException | SQLException ex) {
+                Logger.getLogger(Student.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+        return true;
+    }
+    
+    private void retrieve()
+    {
+        try {
+            clear();
+            DefaultTableModel model = (DefaultTableModel)tblStudentData.getModel();
+            String query = "Select * from Students";
+            ResultSet rs = db.stm.executeQuery(query);
+            int counter =1;
+            while (rs.next()) {
+                Object row[] = {rs.getString("Student_Id"),counter, rs.getString("Student_Name"), rs.getString("Batch"),
+                    rs.getString("Username"), rs.getString("Password")};
+                model.addRow(row);
+                counter++;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Student.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
